@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProverbioSoft</title>
+<link rel="icon" type="assets/png" href="assets/logo.png">  <!-- aquí --><style>
+:root {
+  --bg:     #0a0c10;
+  --bg2:    #0e1117;
+  --bg3:    #151820;
+  --bg4:    #1c2030;
+  --blue:   #3b82f6;
+  --blue2:  #60a5fa;
+  --blue3:  #1d4ed8;
+  --glow:   rgba(59,130,246,0.35);
+  --text:   #f1f5f9;
+  --muted:  #64748b;
+  --muted2: #94a3b8;
+  --border: rgba(255,255,255,0.07);
+  --f:      'Outfit', sans-serif;
+  --mono:   'JetBrains Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--f);overflow-x:hidden;line-height:1.6}
+
+.cursor-glow{position:fixed;pointer-events:none;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.07) 0%,transparent 70%);transform:translate(-50%,-50%);z-index:0;transition:opacity .3s}
+
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:.5}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;background:rgba(10,12,16,0.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+.logo-mark{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:1rem;color:#fff;letter-spacing:-.05em;flex-shrink:0}
+.logo-text{font-weight:800;font-size:1.1rem;letter-spacing:-.02em}
+.logo-text span{color:var(--blue)}
+.nav-links{display:flex;gap:.25rem;list-style:none}
+.nav-links a{color:var(--muted2);font-size:.88rem;font-weight:500;padding:.45rem 1rem;border-radius:8px;text-decoration:none;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--bg4)}
+.nav-cta{background:var(--blue)!important;color:#fff!important;font-weight:600!important}
+.nav-cta:hover{background:#2563eb!important;transform:translateY(-1px);box-shadow:0 4px 20px var(--glow)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.mob-menu{display:none;position:fixed;top:65px;left:0;right:0;background:rgba(10,12,16,.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:1.5rem 2rem;z-index:199;flex-direction:column;gap:.3rem}
+.mob-menu a{color:var(--muted2);text-decoration:none;font-size:.92rem;padding:.6rem 0;border-bottom:1px solid var(--border);transition:color .2s}
+.mob-menu a:hover{color:var(--blue)}
+.mob-menu.open{display:flex}
+
+#home{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 2rem 5rem;overflow:hidden}
+.hero-orb{position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 65%);pointer-events:none;animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.1)}}
+.hero-badge{display:inline-flex;align-items:center;gap:.6rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:50px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue2);margin-bottom:2rem;animation:fadeDown .8s ease both}
+.hero-badge::before{content:'';width:8px;height:8px;background:var(--blue);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.hero-title{font-size:clamp(3rem,8vw,6.5rem);font-weight:900;line-height:1.0;letter-spacing:-.04em;margin-bottom:1.5rem;animation:fadeUp .9s .1s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-title .line-blue{display:block;color:var(--blue)}
+.hero-title .line-white{display:block;color:var(--text)}
+.hero-sub{max-width:600px;color:var(--muted2);font-size:1.05rem;font-weight:400;line-height:1.75;margin-bottom:3rem;animation:fadeUp .9s .25s ease both}
+.hero-sub strong{color:var(--text);font-weight:600}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp .9s .4s ease both}
+.btn-blue{background:var(--blue);color:#fff;font-family:var(--f);font-weight:700;font-size:.9rem;padding:.85rem 2.2rem;border-radius:12px;text-decoration:none;transition:all .25s;border:none;cursor:pointer}
+.btn-blue:hover{background:#2563eb;transform:translateY(-2px);box-shadow:0 12px 32px var(--glow)}
+.btn-outline{background:transparent;color:var(--text);font-family:var(--f);font-weight:600;font-size:.9rem;padding:.85rem 2.2rem;border-radius:12px;text-decoration:none;border:1px solid var(--border);transition:all .25s}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:4rem;animation:fadeUp .9s .55s ease both;flex-wrap:wrap}
+.h-stat-n{font-size:2.5rem;font-weight:900;letter-spacing:-.04em;color:var(--text)}
+.h-stat-n span{color:var(--blue)}
+.h-stat-l{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 2rem}
+.s-tag{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:.6rem}
+.s-title{font-size:clamp(2rem,4vw,3rem);font-weight:900;letter-spacing:-.04em;line-height:1.1}
+section.z2{position:relative;z-index:2}
+
+#nuestro-trabajo{padding:7rem 2rem}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+.proj-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .35s;display:flex;flex-direction:column}
+.proj-card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.14);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.proj-hero{position:relative;height:400px;overflow:hidden}.proj-hero img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform .5s ease}
+.proj-card:hover .proj-hero img{transform:scale(1.05)}
+.proj-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.1) 0%,rgba(0,0,0,.6) 100%)}
+.proj-hero-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:1.4rem 1.6rem}
+.proj-status{display:inline-flex;align-items:center;gap:.5rem;background:rgba(59,130,246,.92);backdrop-filter:blur(8px);color:#fff;font-size:.72rem;font-weight:700;padding:.35rem 1rem;border-radius:50px;width:fit-content;letter-spacing:.04em}
+.proj-status::before{content:'';width:7px;height:7px;background:#fff;border-radius:50%}
+.proj-status.done{background:rgba(16,185,129,.92)}
+.proj-hero-title{font-size:2rem;font-weight:900;letter-spacing:-.04em;color:#fff;line-height:1.1;margin-bottom:.3rem;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+.proj-hero-sub{font-size:.85rem;color:rgba(255,255,255,.75)}
+.proj-hero-loc{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.4rem}
+
+#servicios{padding:7rem 2rem;background:var(--bg2)}
+.serv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
+.serv-card{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:2rem 1.8rem;transition:all .3s}
+.serv-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.12);background:var(--bg4)}
+.serv-ico{width:52px;height:52px;border-radius:14px;background:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:1.3rem}
+.serv-ico svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.serv-name{font-size:1rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem;color:var(--text)}
+.serv-desc{font-size:.83rem;color:var(--muted2);line-height:1.8}
+
+#sobre-nosotros{padding:7rem 2rem;background:var(--bg2)}
+.sobre-intro{max-width:680px;margin:1.2rem 0 4rem;color:var(--muted2);font-size:1rem;line-height:1.85}
+.sobre-intro strong{color:var(--text)}
+.mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:5rem}
+.mv-card{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2rem 2.2rem;transition:all .3s;position:relative;overflow:hidden}
+.mv-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.07),transparent 60%);pointer-events:none}
+.mv-card:hover{border-color:rgba(59,130,246,.35);transform:translateY(-4px)}
+.mv-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:1rem}
+.mv-label-ico{width:28px;height:28px;background:rgba(59,130,246,.15);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.mv-label-ico svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.mv-heading{font-size:1.35rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.75rem;color:var(--text)}
+.mv-text{font-size:.85rem;color:var(--muted2);line-height:1.85}
+.team-header{text-align:center;margin-bottom:3rem}
+.team-tag{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem}
+.team-title{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;letter-spacing:-.04em}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.team-card{background:var(--bg3);border:1px solid var(--border);border-radius:22px;overflow:hidden;transition:all .35s;position:relative}
+.team-card:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.4);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.team-photo-wrap{position:relative;padding:1.6rem 1.6rem .8rem;display:flex;justify-content:center}
+.team-photo-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(59,130,246,.18),rgba(168,85,247,.12),transparent 65%);pointer-events:none}
+.team-photo-placeholder{width:140px;height:140px;border-radius:18px;background:linear-gradient(135deg,var(--bg4),var(--bg3));border:2px solid rgba(59,130,246,.25);display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;z-index:1}
+.team-info{padding:.8rem 1.6rem 1.8rem;text-align:center}
+.team-name{font-size:1.05rem;font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:.3rem}
+.team-role-badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:50px;padding:.3rem .9rem;font-size:.68rem;font-weight:700;color:var(--blue2);letter-spacing:.06em;text-transform:uppercase}
+.team-role-badge svg{width:11px;height:11px;stroke:var(--blue2);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+#stack{padding:7rem 2rem}
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:1rem;margin-top:3rem}
+.sk-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.2rem;text-align:center;transition:all .25s;cursor:default}
+.sk-card:hover{border-color:var(--blue);transform:scale(1.05)}
+.sk-e{font-size:2rem;display:block;margin-bottom:.5rem}
+.sk-n{font-size:.75rem;font-weight:700;color:var(--text)}
+.sk-c{font-size:.62rem;color:var(--muted);letter-spacing:.06em;margin-top:2px}
+
+/* ─── CONTACTO ─── */
+#contacto{padding:7rem 2rem;background:linear-gradient(180deg,transparent,rgba(59,130,246,.05),transparent)}
+.contact-inner{max-width:900px;margin:0 auto;text-align:center}
+.contact-inner .s-title{font-size:clamp(2.5rem,5vw,4rem);margin-bottom:1rem}
+.contact-tagline{color:var(--muted2);margin-bottom:3.5rem;font-size:.95rem;line-height:1.8}
+
+/* Contact cards */
+.contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
+.contact-card{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2.5rem 2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;transition:all .35s;position:relative;overflow:hidden;text-decoration:none;color:inherit}
+.contact-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.06),transparent 60%);pointer-events:none}
+.contact-card:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.4);box-shadow:0 24px 50px rgba(0,0,0,.4)}
+.contact-card-ico{width:64px;height:64px;border-radius:18px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s}
+.contact-card:hover .contact-card-ico{transform:scale(1.08)}
+.contact-card-ico svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.contact-card-label{font-size:1rem;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.contact-card-value{font-size:.85rem;color:var(--muted2);font-weight:400;line-height:1.5}
+
+footer{position:relative;z-index:2;padding:1.8rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto;flex-wrap:wrap;gap:.5rem}
+footer p{font-size:.75rem;color:var(--muted)}
+footer span{color:var(--blue)}
+.footer-logo{font-size:.85rem;font-weight:800;letter-spacing:-.02em}
+.footer-logo span{color:var(--blue)}
+.footer-socials{display:flex;gap:.6rem;align-items:center}
+.social-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted2);text-decoration:none;transition:all .2s}
+.social-btn svg{width:17px;height:17px}
+.social-btn:hover{color:#fff;border-color:var(--blue);background:rgba(59,130,246,.15);transform:translateY(-2px)}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg3);border:1px solid rgba(59,130,246,.5);border-radius:14px;padding:1rem 1.5rem;font-size:.82rem;color:var(--text);z-index:999;transform:translateY(120px);opacity:0;transition:all .4s;max-width:280px}
+.toast.show{transform:translateY(0);opacity:1}
+
+.r{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.r.on{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .mv-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .proj-grid{grid-template-columns:1fr}
+  .serv-grid{grid-template-columns:1fr 1fr}
+  .contact-cards{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  nav{padding:.9rem 1.2rem}
+  .hero-stats{gap:1.5rem}
+  .h-stat-n{font-size:1.8rem}
+  .serv-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-blue,.btn-outline{width:100%;text-align:center}
+  footer{justify-content:center;text-align:center}
+  .team-grid{grid-template-columns:1fr}
+  .mv-grid{grid-template-columns:1fr}
+  .contact-cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cg"></div>
+
+<nav>
+  <a href="#home" class="nav-logo">
+    <div class="logo-mark">PS</div>
+    <span class="logo-text">Proverbio<span>Soft</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#nuestro-trabajo">Nuestro Trabajo</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+    <li><a href="#contacto" class="nav-cta">Contáctanos</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob-menu" id="mm">
+  <a href="#home" onclick="toggleMenu()">Home</a>
+  <a href="#nuestro-trabajo" onclick="toggleMenu()">Nuestro Trabajo</a>
+  <a href="#servicios" onclick="toggleMenu()">Servicios</a>
+  <a href="#sobre-nosotros" onclick="toggleMenu()">Sobre Nosotros</a>
+  <a href="#contacto" onclick="toggleMenu()">Contáctanos</a>
+</div>
+
+<section id="home" class="z2">
+  <div class="hero-orb"></div>
+  <h1 class="hero-title">
+    <span class="line-white">Tecnología que impulsa</span>
+    <span class="line-blue">tu negocio al siguiente nivel</span>
+  </h1>
+  <p class="hero-sub">
+    En <strong>ProverbioSoft</strong>, convertimos tus ideas en soluciones tecnológicas innovadoras.
+    Desde la concepción hasta la implementación, estamos contigo en <strong>cada paso del camino</strong>.
+  </p>
+  <div class="hero-btns">
+    <a href="#sobre-nosotros" class="btn-blue">Sobre Nosotros</a>
+    <a href="#nuestro-trabajo" class="btn-outline">Nuestro Trabajo</a>
+  </div>
+</section>
+
+<section id="nuestro-trabajo" class="z2">
+  <div class="wrap">
+    <div class="r">
+      <h5 class="s-title">Nuestros Trabajos</h5>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card r">
+        <div class="proj-hero">
+          <img src="assets/leche.png" alt="Control Lechero App">
+          <div class="proj-hero-overlay"></div>
+          <div class="proj-hero-content">
+            <span class="proj-status done">Finalizado</span>
+            <div>
+              <div class="proj-hero-title">Control Lechero Productivo</div>
+              <div class="proj-hero-sub">Sistema de gestión lechero</div>
+              <div class="proj-hero-loc">Píllaro · Ecuador</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="proj-card r">
+        <div class="proj-hero">
+          <img src="assets/megalodon.png" alt="Megalodon POS">
+          <div class="proj-hero-overlay"></div>
+          <div class="proj-hero-content">
+            <span class="proj-status done">Finalizado</span>
+            <div>
+              <div class="proj-hero-title">Megalodon POS</div>
+              <div class="proj-hero-sub">Punto de venta de alto nivel</div>
+              <div class="proj-hero-loc">Ambato · Ecuador</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios" class="z2">
+  <div class="wrap">
+    <div class="r">
+      <h2 class="s-title">Nuestros Servicios</h2>
+    </div>
+    <div class="serv-grid">
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3 class="serv-name">Desarrollo Web</h3>
+        <p class="serv-desc">Creamos sitios y aplicaciones web modernas, escalables y rápidas adaptadas a tu negocio. Con enfoque en diseño, usabilidad y rendimiento.</p>
+      </div>
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <h3 class="serv-name">Desarrollo de Apps Móviles</h3>
+        <p class="serv-desc">Desde apps nativas hasta soluciones híbridas, desarrollamos aplicaciones móviles con experiencia de usuario excepcional para iOS y Android.</p>
+      </div>
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <h3 class="serv-name">Consultoría Tecnológica</h3>
+        <p class="serv-desc">Analizamos tus sistemas y te asesoramos con soluciones personalizadas para optimizar la eficiencia, seguridad y crecimiento de tu infraestructura digital.</p>
+      </div>
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3 class="serv-name">Software a Medida</h3>
+        <p class="serv-desc">Soluciones 100% personalizadas para tu industria. Si tu sector lo necesita, lo analizamos, diseñamos y construimos desde cero.</p>
+      </div>
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <h3 class="serv-name">Instalación de Cámaras de Seguridad</h3>
+        <p class="serv-desc">Implementamos sistemas de videovigilancia para hogares, negocios y empresas. Instalación profesional, grabación 24/7 y configuración completa.</p>
+      </div>
+      <div class="serv-card r">
+        <div class="serv-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="serv-name">Mantenimiento & Soporte</h3>
+        <p class="serv-desc">Tu software en manos expertas. Monitoreo proactivo, actualizaciones de seguridad y soporte técnico prioritario garantizados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sobre-nosotros" class="z2">
+  <div class="wrap">
+    <div class="r">
+      <h2 class="s-title">Sobre Nosotros</h2>
+    </div>
+    <p class="sobre-intro r">
+      En <strong>ProverbioSoft</strong> somos un equipo apasionado por la tecnología, comprometido con transformar ideas en productos digitales de alto impacto.
+      Diseñamos y desarrollamos software a medida que resuelve problemas reales, combinando <strong>calidad técnica, creatividad y atención al detalle</strong> en cada proyecto que realizamos.
+    </p>
+    <div class="mv-grid">
+      <div class="mv-card r">
+        <div class="mv-label">
+          <div class="mv-label-ico">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          Nuestra Misión
+        </div>
+        <p class="mv-text">Brindar soluciones de software innovadoras, funcionales y escalables que impulsen el crecimiento de nuestros clientes. Nos comprometemos a entregar productos de calidad, adaptados a las necesidades específicas de cada negocio, con un enfoque en la experiencia del usuario.</p>
+      </div>
+      <div class="mv-card r">
+        <div class="mv-label">
+          <div class="mv-label-ico">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          Nuestra Visión
+        </div>
+        <p class="mv-text">Consolidarnos como una empresa pionera de desarrollo de software en el Cantón Píllaro y de referencia en Ecuador, reconocida por la calidad de nuestros productos, la confianza de nuestros clientes y nuestra capacidad de adaptación a los constantes cambios tecnológicos.</p>
+      </div>
+    </div>
+    <div class="team-header r">
+      <p class="team-tag">Nuestro Equipo</p>
+      <h3 class="team-title">Conoce a nuestros profesionales</h3>
+    </div>
+    <div class="team-grid">
+      <div class="team-card r">
+        <div class="team-photo-wrap">
+          <div class="team-photo-placeholder">👨‍💻</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Mauricio Saquinga</div>
+          <div style="margin-bottom:.5rem; display:flex; flex-wrap:wrap; justify-content:center; gap:.4rem;">
+            <span class="team-role-badge">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                CEO &amp; Fundador
+            </span>
+            <span class="team-role-badge">
+                <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Desarrollador Back-End
+            </span>
+            </div>
+        </div>
+      </div>
+      <div class="team-card r">
+        <div class="team-photo-wrap">
+          <div class="team-photo-placeholder">👨‍💻</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">José Jarlin</div>
+          <div style="margin-bottom:.5rem">
+            <span class="team-role-badge">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Desarrollador Back-End
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="team-card r">
+        <div class="team-photo-wrap">
+          <div class="team-photo-placeholder">👩‍💻</div>
+        </div>
+        <div class="team-info">
+          <div class="team-name">Carmela Uribe</div>
+          <div style="margin-bottom:.5rem">
+            <span class="team-role-badge">
+              <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              QA Tester
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="team-card r">
+        <div class="team-photo-wrap">
+<img src="assets/jenifer.jpeg"  class="team-photo-placeholder" style="object-fit:cover;">        </div>
+        <div class="team-info">
+          <div class="team-name">Jenifer Quimbiurco</div>
+          <div style="margin-bottom:.5rem">
+            <span class="team-role-badge">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              Servicio al Cliente
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACTO ─── -->
+<section id="contacto" class="z2">
+  <div class="contact-inner wrap">
+    <div class="r">
+      <h2 class="s-title">Contáctanos</h2>
+    </div>
+    <p class="contact-tagline r">Estamos aquí para ayudarte. Contáctanos y trabajemos juntos.</p>
+
+    <div class="contact-cards">
+
+      <!-- Correo -->
+      <a href="mailto:proverbiosoft@gmail.com" class="contact-card r">
+        <div class="contact-card-ico">
+          <!-- Mail icon -->
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="contact-card-label">Correo Electrónico</div>
+        <div class="contact-card-value">supportproverbiosoft@gmail.com</div>
+      </a>
+
+      <!-- WhatsApp / Teléfono -->
+      <a href="https://wa.me/593XXXXXXXXX" target="_blank" class="contact-card r">
+        <div class="contact-card-ico">
+          <!-- WhatsApp / phone icon -->
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.02 1.18 2 2 0 012 .02h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+        </div>
+        <div class="contact-card-label">Teléfono / WhatsApp</div>
+        <div class="contact-card-value">0982827692</div>
+      </a>
+
+      <!-- Ubicación -->
+      <a href="https://maps.google.com/?q=Pillaro,Ecuador" target="_blank" class="contact-card r">
+        <div class="contact-card-ico">
+          <!-- Map pin icon -->
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="contact-card-label">Ubicación</div>
+        <div class="contact-card-value">Píllaro, Tungurahua<br>Ecuador</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Proverbio<span>Soft</span></div>
+  <p>© 2026 <span>ProverbioSoft</span>. Todos los derechos reservados. · Píllaro, Ecuador</p>
+  <div class="footer-socials">
+    <a href="https://www.tiktok.com/@proverbiosoft" target="_blank" class="social-btn" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/proverbio_soft06/" target="_blank" class="social-btn" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>
+  </div>
+</footer>
+
+<div class="toast" id="toast">✅ ¡Mensaje enviado! Te respondemos pronto.</div>
+
+<script>
+const cg = document.getElementById('cg');
+document.addEventListener('mousemove', e => {
+  cg.style.left = e.clientX + 'px';
+  cg.style.top  = e.clientY + 'px';
+});
+
+function toggleMenu(){
+  document.getElementById('mm').classList.toggle('open');
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+    document.getElementById('mm').classList.remove('open');
+  });
+});
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if(en.isIntersecting){
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id);
+      });
+    }
+  });
+}, {threshold:.4});
+sections.forEach(s => io.observe(s));
+
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if(en.isIntersecting){
+      const siblings = en.target.parentElement.querySelectorAll('.r:not(.on)');
+      siblings.forEach((s, si) => {
+        setTimeout(() => s.classList.add('on'), si * 80);
+      });
+      en.target.classList.add('on');
+    }
+  });
+}, {threshold:.1});
+document.querySelectorAll('.r').forEach(el => ro.observe(el));
+</script>
+</body>
+</html>
