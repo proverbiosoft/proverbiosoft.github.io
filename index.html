@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ProverbioSoft</title>
-<link rel="icon" type="assets/png" href="assets/logo.png">  <!-- aquí --><style>
+<link rel="icon" type="assets/png" href="assets/logo1.png">  <!-- aquí --><style>
 :root {
   --bg:     #0a0c10;
   --bg2:    #0e1117;
@@ -33,6 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
 .logo-mark{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:1rem;color:#fff;letter-spacing:-.05em;flex-shrink:0}
 .logo-text{font-weight:800;font-size:1.1rem;letter-spacing:-.02em}
+.logo-text{font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--text)}
 .logo-text span{color:var(--blue)}
 .nav-links{display:flex;gap:.25rem;list-style:none}
 .nav-links a{color:var(--muted2);font-size:.88rem;font-weight:500;padding:.45rem 1rem;border-radius:8px;text-decoration:none;transition:all .2s}
@@ -194,8 +195,10 @@ footer span{color:var(--blue)}
 
 <nav>
   <a href="#home" class="nav-logo">
-    <div class="logo-mark">PS</div>
-    <span class="logo-text">Proverbio<span>Soft</span></span>
+<img src="assets/logo.png" style="width:70px;height:70px;border-radius:10px;object-fit:cover;">
+<div>
+  <span class="logo-text">Proverbio<span>Soft</span></span>
+<span style="font-size:.6rem;color:var(--muted);letter-spacing:.08em;display:block;margin-top:-2px;">Innovación & Tecnología</span></div>
   </a>
   <ul class="nav-links">
     <li><a href="#home" class="active">Home</a></li>
